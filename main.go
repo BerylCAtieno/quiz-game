@@ -1,12 +1,52 @@
 package main
 
-import "fmt"
+import (
+	"flag"
+	"fmt"
+	"encoding/csv"
+	"os"
+)
 
-func main() {
-	fmt.Println("Hello World!")
+
+func readArgs() string {
+	filename := flag.String("filename", "problems.csv", "a csv file in the format of 'question,answer'")
+	
+	flag.Parse()
+
+	return *filename
+
 }
 
-// 1. set up a flag for the csv file
-// 2. read and parse the file
-// 3. Define quiz logic
-// 4. Display results
+func readCSV(filename string) {
+	file, err := os.Open(filename)
+
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+
+	problems, err := reader.ReadAll()
+
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	for _, row := range problems {
+		if len(row) < 2 {
+			fmt.Println("Skipping malformed row:", row)
+			continue
+		}
+		question := row[0]
+		answer := row[1]
+		fmt.Printf("Question: %s, Answer: %s\n", question, answer)
+	}
+}
+
+func main() {
+	file := readArgs()
+	readCSV(file)
+}
