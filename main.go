@@ -6,6 +6,7 @@ import (
 	"encoding/csv"
 	"os"
 	"strings"
+	"bufio"
 )
 
 type Question struct {
@@ -57,7 +58,32 @@ func readCSV(filename string) ([]Question, error) {
 	return quiz, nil
 }
 
+func startQuiz(quiz []Question) {
+	correctAnswers := 0
+	reader := bufio.NewReader(os.Stdin)
+
+	for i, question := range quiz {
+		fmt.Printf("Question %d: %s = ", i+1, question.question)
+
+		// Get the user's answer
+		userAnswer, _ := reader.ReadString('\n')
+		userAnswer = strings.TrimSpace(userAnswer) // Remove any extra whitespace
+
+		// Compare answers (case-insensitive)
+		if strings.EqualFold(userAnswer, question.answer) {
+			fmt.Println("Correct!")
+			correctAnswers++
+		} else {
+			fmt.Printf("Incorrect. The correct answer is %s.\n", question.answer)
+		}
+	}
+
+	// Display the total score
+	fmt.Printf("\nYou scored %d out of %d.\n", correctAnswers, len(quiz))
+}
+
 func main() {
 	file := readArgs()
-	readCSV(file)
+	quiz, _ := readCSV(file)
+	startQuiz(quiz)
 }
