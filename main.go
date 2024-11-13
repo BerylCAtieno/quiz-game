@@ -7,6 +7,11 @@ import (
 	"os"
 )
 
+type Question struct {
+	question string
+	answer string
+}
+
 
 func readArgs() string {
 	filename := flag.String("filename", "problems.csv", "a csv file in the format of 'question,answer'")
@@ -35,14 +40,23 @@ func readCSV(filename string) {
 		return
 	}
 
+	var quiz []Question
+
 	for _, row := range problems {
 		if len(row) < 2 {
 			fmt.Println("Skipping malformed row:", row)
 			continue
 		}
-		question := row[0]
-		answer := row[1]
-		fmt.Printf("Question: %s, Answer: %s\n", question, answer)
+
+		q := Question{
+			question: row[0],
+			answer:   row[1],
+		}
+		quiz = append(quiz, q)
+	}
+
+	for _, question := range quiz {
+		fmt.Printf("Question: %s, Answer: %s\n", question.question, question.answer)
 	}
 }
 
