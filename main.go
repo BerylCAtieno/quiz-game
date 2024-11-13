@@ -33,7 +33,9 @@ func readArgs() (string, int, bool) {
 }
 
 func readCSV(filename string) ([]Question, error) {
-	file, err := os.Open(filename)
+
+	fullPath := "quizes/" + filename
+	file, err := os.Open(fullPath)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %w", err)
