@@ -84,7 +84,7 @@ func startQuiz(quiz []Question, timeLimit int, shuffle bool) {
 
 	answerCh := make(chan string)
 
-	quizLoop:
+quizLoop:
 	for i, question := range quiz {
 		fmt.Printf("Question %d: %s = \n", i+1, question.question)
 
