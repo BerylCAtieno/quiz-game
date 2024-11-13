@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"encoding/csv"
 	"os"
+	"strings"
 )
 
 type Question struct {
@@ -22,12 +23,11 @@ func readArgs() string {
 
 }
 
-func readCSV(filename string) {
+func readCSV(filename string) ([]Question, error) {
 	file, err := os.Open(filename)
 
 	if err != nil {
-		fmt.Println("Error:", err)
-		return
+		return nil, fmt.Errorf("failed to open file: %w", err)
 	}
 	defer file.Close()
 
@@ -36,8 +36,7 @@ func readCSV(filename string) {
 	problems, err := reader.ReadAll()
 
 	if err != nil {
-		fmt.Println("Error:", err)
-		return
+		return nil, fmt.Errorf("failed to read CSV data: %w", err)
 	}
 
 	var quiz []Question
@@ -49,15 +48,13 @@ func readCSV(filename string) {
 		}
 
 		q := Question{
-			question: row[0],
-			answer:   row[1],
+			question: strings.TrimSpace(row[0]),
+			answer:   strings.TrimSpace(row[1]),
 		}
 		quiz = append(quiz, q)
 	}
 
-	for _, question := range quiz {
-		fmt.Printf("Question: %s, Answer: %s\n", question.question, question.answer)
-	}
+	return quiz, nil
 }
 
 func main() {
